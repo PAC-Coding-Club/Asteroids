@@ -7,8 +7,18 @@ from pygame.sprite import Group as _Group
 def rot_center(image, angle, center):
     rotated_image = pygame.transform.rotate(image, angle)
     new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
-
     return rotated_image, new_rect
+
+
+class bullet(pygame.sprite.Sprite):
+    def __init__(self, location, *groups: _Group):
+        super().__init__(*groups)
+        self.image = pygame.image.load("bullet.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = location
+
+
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, location, *groups: _Group):
@@ -27,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.position = pygame.Vector2(location)
 
         # Image and Rect
-        self.image = pygame.image.load("player6.png")
+        self.image = pygame.image.load("player.png")
         self.image_original = self.image.copy()
         self.rect = self.image.get_rect()
 
