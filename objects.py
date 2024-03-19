@@ -23,11 +23,12 @@ class Player(pygame.sprite.Sprite):
         self.angle = 0
         self.angle_old = 0
         self.speed = pygame.Vector2(0, 0)
-        self.angle = math.pi/2 # starts upwards
+        self.angle = 0
         self.position = pygame.Vector2(location)
 
         # Image and Rect
-        self.image = pygame.image.load("player.png")
+        self.image = pygame.image.load("player6.png")
+        self.image_original = self.image.copy()
         self.rect = self.image.get_rect()
 
     def update(self, keys_pressed):
@@ -48,7 +49,20 @@ class Player(pygame.sprite.Sprite):
             self.speed.scale_to_length(self.max_speed)
         self.position += self.speed
 
-        # rotate image according to angle
-        self.image, self.rect = rot_center(self.image, self.angle, self.rect.center)
+        # rotate image according to angle (rotate func is opposite to unit circle)
+        self.image, self.rect = rot_center(self.image_original, -math.degrees(self.angle), self.position)
+
+        # wrap position around edges of screen
+        if self.position.x > 1024:
+            self.position.x = 0
+        if self.position.x < 0:
+            self.position.x = 1024
+        if self.position.y > 768:
+            self.position.y = 0
+        if self.position.y < 0:
+            self.position.y = 768
+
+        # update rect
+        self.rect.center = self.position
     def fire(self):
         print("fired bullet")
