@@ -7,6 +7,7 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1024, 768))
 
 sprites = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
 player = objects.Player((200, 200), sprites)
 
 running = True
@@ -18,12 +19,18 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
             if event.key == pygame.K_SPACE:
-                player.fire()
+                if len(bullets.sprites()) >= 4:
+                    bullets.sprites()[0].kill()
+                objects.Bullet(player, [sprites, bullets])
 
     # continuous movement
     keys_pressed = pygame.key.get_pressed()
 
-    player.update(keys_pressed)
+    sprites.update(keys_pressed)
+
+    for bullet in bullets.sprites():
+        if player.rect.colliderect(bullet.rect):
+            print("collide")
 
     screen.fill("grey")
     sprites.draw(screen)

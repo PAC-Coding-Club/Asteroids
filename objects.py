@@ -10,14 +10,31 @@ def rot_center(image, angle, center):
     return rotated_image, new_rect
 
 
-class bullet(pygame.sprite.Sprite):
-    def __init__(self, location, *groups: _Group):
+class Bullet(pygame.sprite.Sprite):
+
+    def __init__(self, player, *groups: _Group):
         super().__init__(*groups)
         self.image = pygame.image.load("bullet.png")
         self.rect = self.image.get_rect()
-        self.rect.center = location
+        self.position = copy(player.position)
+        self.rect.center = self.position
 
+        bullet_speed = 1
+        self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
 
+    def update(self, keys_pressed):
+        self.position += self.speed
+        self.rect.center = self.position
+
+        # wrap around screen edges
+        if self.position.x > 1024:
+            self.position.x = 0
+        if self.position.x < 0:
+            self.position.x = 1024
+        if self.position.y > 768:
+            self.position.y = 0
+        if self.position.y < 0:
+            self.position.y = 768
 
 
 class Player(pygame.sprite.Sprite):
@@ -74,5 +91,3 @@ class Player(pygame.sprite.Sprite):
 
         # update rect
         self.rect.center = self.position
-    def fire(self):
-        print("fired bullet")
