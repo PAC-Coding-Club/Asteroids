@@ -8,6 +8,7 @@ screen = pygame.display.set_mode((1024, 768))
 
 sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+asteroids = pygame.sprite.Group()
 player = objects.Player((200, 200), sprites)
 
 running = True
@@ -22,17 +23,18 @@ while running:
                 if len(bullets.sprites()) >= 4:
                     bullets.sprites()[0].kill()
                 objects.Bullet(player, [sprites, bullets])
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                objects.Asteroid(event.pos, 1, [sprites, asteroids])
 
     # continuous movement
     keys_pressed = pygame.key.get_pressed()
 
-    sprites.update(keys_pressed)
+    bullets.update(asteroids)
+    player.update(keys_pressed)
+    asteroids.update()
 
-    for bullet in bullets.sprites():
-        if player.rect.colliderect(bullet.rect):
-            print("collide")
-
-    screen.fill("grey")
+    screen.fill("black")
     sprites.draw(screen)
     pygame.display.update()
 

@@ -10,19 +10,24 @@ def rot_center(image, angle, center):
     return rotated_image, new_rect
 
 
-class Bullet(pygame.sprite.Sprite):
-
-    def __init__(self, player, *groups: _Group):
+class Asteroid(pygame.sprite.Sprite):
+    def __init__(self, location, size, *groups: _Group):
         super().__init__(*groups)
-        self.image = pygame.image.load("bullet.png")
+
+        self.size = size
+        if self.size == 1:
+            self.image = pygame.image.load("asteroid1.png")
+        elif self.size == 2:
+            self.image = pygame.image.load("asteroid2.png")
+        elif self.size == 3:
+            self.image = pygame.image.load("asteroid3.png")
         self.rect = self.image.get_rect()
-        self.position = copy(player.position)
+
+        self.speed = pygame.Vector2(1, 1)
+        self.position = location
         self.rect.center = self.position
 
-        bullet_speed = 1
-        self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
-
-    def update(self, keys_pressed):
+    def update(self):
         self.position += self.speed
         self.rect.center = self.position
 
@@ -35,6 +40,38 @@ class Bullet(pygame.sprite.Sprite):
             self.position.y = 0
         if self.position.y < 0:
             self.position.y = 768
+
+
+class Bullet(pygame.sprite.Sprite):
+
+    def __init__(self, player, *groups: _Group):
+        super().__init__(*groups)
+        self.image = pygame.image.load("bullet.png")
+        self.rect = self.image.get_rect()
+        self.position = copy(player.position)
+        self.rect.center = self.position
+
+        bullet_speed = 1
+        self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
+
+    def update(self, asteroids):
+        self.position += self.speed
+        self.rect.center = self.position
+
+        # wrap around screen edges
+        if self.position.x > 1024:
+            self.position.x = 0
+        if self.position.x < 0:
+            self.position.x = 1024
+        if self.position.y > 768:
+            self.position.y = 0
+        if self.position.y < 0:
+            self.position.y = 768
+
+        for asteroid in asteroids:
+            if self.rect.colliderect(asteroid.rect):
+                asteroid.kill()
+                self.kill()
 
 
 class Player(pygame.sprite.Sprite):
