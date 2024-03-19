@@ -1,4 +1,5 @@
 import math
+import random
 from copy import copy
 import pygame
 from pygame.sprite import Group as _Group
@@ -14,16 +15,23 @@ class Asteroid(pygame.sprite.Sprite):
     def __init__(self, location, size, *groups: _Group):
         super().__init__(*groups)
 
+        self.speed = pygame.Vector2(random.randint(-100, 100)/100, random.randint(-100, 100)/100)
+
         self.size = size
         if self.size == 1:
             self.image = pygame.image.load("asteroid1.png")
+            self.speed.scale_to_length(random.randint(5, 10) / 3)
         elif self.size == 2:
             self.image = pygame.image.load("asteroid2.png")
+            self.speed.scale_to_length(random.randint(5, 10) / 5)
         elif self.size == 3:
             self.image = pygame.image.load("asteroid3.png")
+            self.speed.scale_to_length(random.randint(5, 10) / 8)
         self.rect = self.image.get_rect()
 
-        self.speed = pygame.Vector2(1, 1)
+        self.image = pygame.transform.rotate(self.image, math.degrees(random.randint(0, 360)))
+
+
         self.position = location
         self.rect.center = self.position
 
@@ -51,10 +59,10 @@ class Bullet(pygame.sprite.Sprite):
         self.position = copy(player.position)
         self.rect.center = self.position
 
-        bullet_speed = 1
+        bullet_speed = 3
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
 
-    def update(self, asteroids):
+    def update(self, asteroids, *groups: _Group):
         self.position += self.speed
         self.rect.center = self.position
 
@@ -70,8 +78,10 @@ class Bullet(pygame.sprite.Sprite):
 
         for asteroid in asteroids:
             if self.rect.colliderect(asteroid.rect):
-                asteroid.kill()
                 self.kill()
+                for i in range(2):
+                    Asteroid(asteroid.position, asteroid.size - 1, asteroid.groups())
+                asteroid.kill()
 
 
 class Player(pygame.sprite.Sprite):

@@ -25,7 +25,7 @@ while running:
                 objects.Bullet(player, [sprites, bullets])
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                objects.Asteroid(event.pos, 1, [sprites, asteroids])
+                objects.Asteroid(event.pos, 3, [sprites, asteroids])
 
     # continuous movement
     keys_pressed = pygame.key.get_pressed()
