@@ -27,10 +27,9 @@ class Asteroid(pygame.sprite.Sprite):
         elif self.size == 3:
             self.image = pygame.image.load("asteroid3.png")
             self.speed.scale_to_length(random.randint(5, 10) / 8)
+
+        self.image = pygame.transform.rotate(self.image, random.randint(0, 360))
         self.rect = self.image.get_rect()
-
-        self.image = pygame.transform.rotate(self.image, math.degrees(random.randint(0, 360)))
-
 
         self.position = location
         self.rect.center = self.position
