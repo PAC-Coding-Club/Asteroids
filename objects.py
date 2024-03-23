@@ -2,7 +2,6 @@ import math
 import random
 from copy import copy
 import pygame
-from pygame.sprite import Group as _Group
 
 
 def rot_center(image, angle, center):
@@ -12,7 +11,7 @@ def rot_center(image, angle, center):
 
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self, location, size, *groups: _Group):
+    def __init__(self, location, size, *groups: pygame.sprite.Group):
         super().__init__(*groups)
 
         self.speed = pygame.Vector2(random.randint(-100, 100)/100, random.randint(-100, 100)/100)
@@ -52,7 +51,7 @@ class Asteroid(pygame.sprite.Sprite):
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, player, *groups: _Group):
+    def __init__(self, player, *groups: pygame.sprite.Group):
         super().__init__(*groups)
         self.image = pygame.image.load("bullet.png")
         self.rect = self.image.get_rect()
@@ -62,7 +61,7 @@ class Bullet(pygame.sprite.Sprite):
         bullet_speed = 3
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
 
-    def update(self, asteroids, *groups: _Group):
+    def update(self, asteroids, *groups: pygame.sprite.Group):
         self.position += self.speed
         self.rect.center = self.position
 
@@ -85,7 +84,7 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, *groups: _Group):
+    def __init__(self, location, *groups: pygame.sprite.Group):
         super().__init__(*groups)
 
         # Fixed Values
