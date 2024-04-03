@@ -108,7 +108,7 @@ class Player(pygame.sprite.Sprite):
         self.image_thrust = pygame.image.load("player_thrust.png") # to be changed to a different image w/ blaster on back
         self.rect = self.image.get_rect()
 
-    def update(self, keys_pressed):
+    def update(self, keys_pressed, asteroids):
 
         # add or minus r_speed from angle
         if keys_pressed[pygame.K_LEFT]:
@@ -129,6 +129,11 @@ class Player(pygame.sprite.Sprite):
         if self.speed.length() > self.max_speed:
             self.speed.scale_to_length(self.max_speed)
         self.position += self.speed
+
+        for asteroid in asteroids.sprites():
+            if self.rect.colliderect(asteroid.rect):
+                # self.kill()
+                print("ded")
 
         # wrap position around edges of screen
         if self.position.x > 1024:

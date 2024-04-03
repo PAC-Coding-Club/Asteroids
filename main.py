@@ -2,6 +2,10 @@ import pygame
 import sys
 import objects
 
+pygame.init()
+font = pygame.font.SysFont("Segoe UI", 35)
+
+fps = 60
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1024, 768))
 
@@ -9,6 +13,9 @@ sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 asteroids = pygame.sprite.Group()
 player = objects.Player((200, 200), sprites)
+
+score = 0
+lives = 1
 
 running = True
 while running:
@@ -28,14 +35,17 @@ while running:
     keys_pressed = pygame.key.get_pressed()
 
     bullets.update(asteroids)
-    player.update(keys_pressed)
+    player.update(keys_pressed, asteroids)
     asteroids.update()
 
     screen.fill("black")
     sprites.draw(screen)
+
+    textsurface = font.render(f"Score: {score}", False, "white")
+    screen.blit(textsurface, (10, 10))
     pygame.display.update()
 
-    clock.tick(60)
+    clock.tick(fps)
 
 pygame.quit()
 sys.exit()
