@@ -19,14 +19,12 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
             if event.key == pygame.K_SPACE:
-                if len(bullets.sprites()) >= 4:
-                    bullets.sprites()[0].kill()
-                objects.Bullet(player, [sprites, bullets])
+                if len(bullets.sprites()) < 4:
+                    objects.Bullet(player, [sprites, bullets])
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 objects.Asteroid(event.pos, 3, [sprites, asteroids])
 
-    # continuous movement
     keys_pressed = pygame.key.get_pressed()
 
     bullets.update(asteroids)
