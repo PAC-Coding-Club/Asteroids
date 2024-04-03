@@ -5,10 +5,7 @@ import pygame
 from pygame.sprite import Group as _Group
 
 
-def rot_center(image, angle, center):
-    rotated_image = pygame.transform.rotate(image, angle)
-    new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
-    return rotated_image, new_rect
+
 
 
 class Asteroid(pygame.sprite.Sprite):
@@ -104,7 +101,6 @@ class Player(pygame.sprite.Sprite):
 
         # Altered Values
         self.angle = 0
-        self.angle_old = 0
         self.speed = pygame.Vector2(0, 0)
         self.angle = 0
         self.position = pygame.Vector2(location)
@@ -112,28 +108,30 @@ class Player(pygame.sprite.Sprite):
         # Image and Rect
         self.image = pygame.image.load("player.png")
         self.image_original = self.image.copy()
+        self.image_thrust = pygame.image.load("player.png") # to be changed to a different image w/ blaster on back
         self.rect = self.image.get_rect()
 
     def update(self, keys_pressed):
-        # copy angle
-        self.angle_old = copy(self.angle)
 
-        # Set speed by acceleration
+        # add or minus r_speed from angle
         if keys_pressed[pygame.K_LEFT]:
-            self.angle -= self.r_speed
-        if keys_pressed[pygame.K_RIGHT]:
             self.angle += self.r_speed
+        if keys_pressed[pygame.K_RIGHT]:
+            self.angle -= self.r_speed
         if keys_pressed[pygame.K_UP]:
+            # add acceleration to speed when thrusting
             self.speed.x += self.acceleration * math.cos(self.angle)
             self.speed.y += self.acceleration * math.sin(self.angle)
+
+            # rotate image according to angle and depending on whether is thrusting
+            self.image = pygame.transform.rotate(self.image_thrust, math.degrees(self.angle))
+        else:
+            self.image = pygame.transform.rotate(self.image_original, math.degrees(self.angle))
 
         # Move the player by speed with max speed
         if self.speed.length() > self.max_speed:
             self.speed.scale_to_length(self.max_speed)
         self.position += self.speed
-
-        # rotate image according to angle (rotate func is opposite to unit circle)
-        self.image, self.rect = rot_center(self.image_original, -math.degrees(self.angle), self.position)
 
         # wrap position around edges of screen
         if self.position.x > 1024:
@@ -146,4 +144,4 @@ class Player(pygame.sprite.Sprite):
             self.position.y = 768
 
         # update rect
-        self.rect.center = self.position
+        self.rect = self.image.get_rect(center=self.position)

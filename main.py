@@ -1,6 +1,5 @@
 import pygame
 import sys
-import math
 import objects
 
 clock = pygame.time.Clock()
@@ -26,7 +25,6 @@ while running:
             if event.button == 1:
                 objects.Asteroid(event.pos, 3, [sprites, asteroids])
 
-    # continuous movement
     keys_pressed = pygame.key.get_pressed()
 
     bullets.update(asteroids)
