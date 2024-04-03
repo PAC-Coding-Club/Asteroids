@@ -118,7 +118,7 @@ class Player(pygame.sprite.Sprite):
         if keys_pressed[pygame.K_UP]:
             # add acceleration to speed when thrusting
             self.speed.x += self.acceleration * math.cos(self.angle)
-            self.speed.y += self.acceleration * math.sin(self.angle)
+            self.speed.y -= self.acceleration * math.sin(self.angle)  # minus because of inverted y-axis
 
             # rotate image according to angle and depending on whether is thrusting
             self.image = pygame.transform.rotate(self.image_thrust, math.degrees(self.angle))
