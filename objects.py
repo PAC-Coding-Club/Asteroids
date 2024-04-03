@@ -10,23 +10,31 @@ def rot_center(image, angle, center):
     new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
     return rotated_image, new_rect
 
+def difRandom(min,max,amount):
+    li=[x for x in range(min,max+1)]
+    final=[]
+    if amount>max+1-min:
+        raise Exception("Not enough random numbers to cover amount. \nPlease increase max or decrease min.")
+    random.shuffle(li)
+    for y in range(0,amount):
+        final.append(li[y])
+    return(final)
+
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self, location, size, *groups: _Group):
+    def __init__(self, location, size, speed, *groups: _Group):
         super().__init__(*groups)
 
-        self.speed = pygame.Vector2(random.randint(-100, 100)/100, random.randint(-100, 100)/100)
+        self.speed = pygame.Vector2(speed).copy()
+        print(self.speed)
 
         self.size = size
         if self.size == 1:
             self.image = pygame.image.load("asteroid1.png")
-            self.speed.scale_to_length(random.randint(5, 10) / 3)
         elif self.size == 2:
             self.image = pygame.image.load("asteroid2.png")
-            self.speed.scale_to_length(random.randint(5, 10) / 5)
         elif self.size == 3:
             self.image = pygame.image.load("asteroid3.png")
-            self.speed.scale_to_length(random.randint(5, 10) / 8)
 
         self.image = pygame.transform.rotate(self.image, random.randint(0, 360))
         self.rect = self.image.get_rect()
@@ -48,6 +56,14 @@ class Asteroid(pygame.sprite.Sprite):
         if self.position.y < 0:
             self.position.y = 768
 
+    def split(self):
+        if self.size > 1:
+            ranNums = difRandom(-100, 100, 4)
+            print(ranNums)
+            for i in range(2):
+                Asteroid(self.position, self.size - 1, (ranNums[i]/100, ranNums[i+i]/100), self.groups())
+            self.kill()
+
 
 class Bullet(pygame.sprite.Sprite):
 
@@ -64,7 +80,6 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
 
     def update(self, asteroids, *groups: _Group):
-        print(self.timer)
         if self.timer > self.lifetime:
             self.kill()
         else:
@@ -86,9 +101,7 @@ class Bullet(pygame.sprite.Sprite):
         for asteroid in asteroids:
             if self.rect.colliderect(asteroid.rect):
                 self.kill()
-                for i in range(2):
-                    Asteroid(asteroid.position, asteroid.size - 1, asteroid.groups())
-                asteroid.kill()
+                asteroid.split()
 
 
 class Player(pygame.sprite.Sprite):
