@@ -22,11 +22,12 @@ def difRandom(min,max,amount):
 
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self, location, size, speed, *groups: _Group):
+    def __init__(self, location, size, *groups: _Group):
         super().__init__(*groups)
 
-        self.speed = pygame.Vector2(speed).copy()
-        print(self.speed)
+        self.speed = pygame.Vector2(1, 1).copy()
+        self.speed.rotate_ip(random.randint(0, 360))
+        self.position = pygame.Vector2(location).copy()
 
         self.size = size
         if self.size == 1:
@@ -38,8 +39,6 @@ class Asteroid(pygame.sprite.Sprite):
 
         self.image = pygame.transform.rotate(self.image, random.randint(0, 360))
         self.rect = self.image.get_rect()
-
-        self.position = location
         self.rect.center = self.position
 
     def update(self):
@@ -58,10 +57,10 @@ class Asteroid(pygame.sprite.Sprite):
 
     def split(self):
         if self.size > 1:
-            ranNums = difRandom(-100, 100, 4)
-            print(ranNums)
             for i in range(2):
-                Asteroid(self.position, self.size - 1, (ranNums[i]/100, ranNums[i+i]/100), self.groups())
+                Asteroid(self.position, self.size - 1, self.groups())
+            self.kill()
+        else:
             self.kill()
 
 
