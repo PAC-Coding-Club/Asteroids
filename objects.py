@@ -57,11 +57,19 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.position = copy(player.position)
         self.rect.center = self.position
+        self.timer = 0
+        self.lifetime = 60 * 2.5
 
         bullet_speed = 3
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * math.sin(player.angle)) + player.speed
 
     def update(self, asteroids, *groups: _Group):
+        print(self.timer)
+        if self.timer > self.lifetime:
+            self.kill()
+        else:
+            self.timer += 1
+
         self.position += self.speed
         self.rect.center = self.position
 
