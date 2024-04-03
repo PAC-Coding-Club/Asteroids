@@ -10,16 +10,6 @@ def rot_center(image, angle, center):
     new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
     return rotated_image, new_rect
 
-def difRandom(min,max,amount):
-    li=[x for x in range(min,max+1)]
-    final=[]
-    if amount>max+1-min:
-        raise Exception("Not enough random numbers to cover amount. \nPlease increase max or decrease min.")
-    random.shuffle(li)
-    for y in range(0,amount):
-        final.append(li[y])
-    return(final)
-
 
 class Asteroid(pygame.sprite.Sprite):
     def __init__(self, location, size, *groups: _Group):
