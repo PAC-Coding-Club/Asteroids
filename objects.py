@@ -105,7 +105,7 @@ class Player(pygame.sprite.Sprite):
         # Image and Rect
         self.image = pygame.image.load("player.png")
         self.image_original = self.image.copy()
-        self.image_thrust = pygame.image.load("player.png") # to be changed to a different image w/ blaster on back
+        self.image_thrust = pygame.image.load("player_thrust.png") # to be changed to a different image w/ blaster on back
         self.rect = self.image.get_rect()
 
     def update(self, keys_pressed):
