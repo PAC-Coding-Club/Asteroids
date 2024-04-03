@@ -5,9 +5,6 @@ import pygame
 from pygame.sprite import Group as _Group
 
 
-
-
-
 class Asteroid(pygame.sprite.Sprite):
     def __init__(self, location, size, *groups: _Group):
         super().__init__(*groups)
