@@ -43,7 +43,7 @@ while running:
 
     keys_pressed = pygame.key.get_pressed()
 
-    bullets.update(asteroids)
+    score = bullets.update(asteroids, score)
     player.update(keys_pressed, asteroids)
     asteroids.update()
 

@@ -39,11 +39,18 @@ class Asteroid(pygame.sprite.Sprite):
         if self.position.y < 0:
             self.position.y = 768
 
-    def split(self):
+    def split(self, score):
         if self.size > 1:
             for i in range(2):
                 Asteroid(self.position, self.size - 1, self.groups())
+            if self.size == 3:
+                score += 250
+            if self.size == 2:
+                score += 100
+            if self.size == 1:
+                score += 25
             self.kill()
+            return score
         else:
             self.kill()
 
@@ -62,7 +69,7 @@ class Bullet(pygame.sprite.Sprite):
         bullet_speed = 6
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * -math.sin(player.angle)) + player.speed
 
-    def update(self, asteroids, *groups: _Group):
+    def update(self, asteroids, score, *groups: _Group):
         if self.timer > self.lifetime:
             self.kill()
         else:
@@ -84,7 +91,8 @@ class Bullet(pygame.sprite.Sprite):
         for asteroid in asteroids:
             if self.rect.colliderect(asteroid.rect):
                 self.kill()
-                asteroid.split()
+                score = asteroid.split(score)
+        return score
 
 
 class Player(pygame.sprite.Sprite):
