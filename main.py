@@ -18,7 +18,7 @@ score = 0
 lives = 1
 
 
-def draw_hit_boxes(screen, player, bullets, asteroids):
+def draw_hit_boxes():
     pygame.draw.rect(screen, "red", player.rect, 1)
     for bullet in bullets:
         pygame.draw.rect(screen, "red", bullet.rect, 1)
@@ -43,16 +43,16 @@ while running:
 
     keys_pressed = pygame.key.get_pressed()
 
-    score = bullets.update(asteroids, score)
+    bullets.update(asteroids)
     player.update(keys_pressed, asteroids)
     asteroids.update()
 
     screen.fill("black")
     sprites.draw(screen)
-
     textsurface = font.render(f"Score: {score}", False, "white")
     screen.blit(textsurface, (10, 10))
-    draw_hit_boxes(screen, player, bullets, asteroids)
+
+    draw_hit_boxes()
     pygame.display.update()
 
     clock.tick(fps)
