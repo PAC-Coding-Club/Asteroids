@@ -2,11 +2,10 @@ import math
 import random
 from copy import copy
 import pygame
-from pygame.sprite import Group as _Group
 
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self, location, size, *groups: _Group):
+    def __init__(self, location, size, *groups: pygame.sprite.Group):
         super().__init__(*groups)
 
         self.speed = pygame.Vector2(1, 1).copy()
@@ -39,37 +38,30 @@ class Asteroid(pygame.sprite.Sprite):
         if self.position.y < 0:
             self.position.y = 768
 
-    def split(self, score):
+    def split(self):
         if self.size > 1:
             for i in range(2):
                 Asteroid(self.position, self.size - 1, self.groups())
-            if self.size == 3:
-                score += 250
-            if self.size == 2:
-                score += 100
-            if self.size == 1:
-                score += 25
             self.kill()
-            return score
         else:
             self.kill()
 
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self, player, *groups: _Group):
+    def __init__(self, player, *groups: pygame.sprite.Group):
         super().__init__(*groups)
         self.image = pygame.image.load("bullet.png")
         self.rect = self.image.get_rect()
         self.position = copy(player.position)
         self.rect.center = self.position
         self.timer = 0
-        self.lifetime = 60 * 3
+        self.lifetime = 60 * 1.5
 
         bullet_speed = 6
         self.speed = pygame.Vector2(bullet_speed * math.cos(player.angle), bullet_speed * -math.sin(player.angle)) + player.speed
 
-    def update(self, asteroids, score, *groups: _Group):
+    def update(self, *groups: pygame.sprite.Group):
         if self.timer > self.lifetime:
             self.kill()
         else:
@@ -88,15 +80,9 @@ class Bullet(pygame.sprite.Sprite):
         if self.position.y < 0:
             self.position.y = 768
 
-        for asteroid in asteroids:
-            if self.rect.colliderect(asteroid.rect):
-                self.kill()
-                score = asteroid.split(score)
-        return score
-
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, *groups: _Group):
+    def __init__(self, location, *groups: pygame.sprite.Group):
         super().__init__(*groups)
 
         # Fixed Values
@@ -116,7 +102,7 @@ class Player(pygame.sprite.Sprite):
         self.image_thrust = pygame.image.load("player_thrust.png") # to be changed to a different image w/ blaster on back
         self.rect = self.image.get_rect()
 
-    def update(self, keys_pressed, asteroids):
+    def update(self, keys_pressed):
 
         # add or minus r_speed from angle
         if keys_pressed[pygame.K_LEFT]:
@@ -137,11 +123,6 @@ class Player(pygame.sprite.Sprite):
         if self.speed.length() > self.max_speed:
             self.speed.scale_to_length(self.max_speed)
         self.position += self.speed
-
-        for asteroid in asteroids.sprites():
-            if self.rect.colliderect(asteroid.rect):
-                # self.kill()
-                print("ded")
 
         # wrap position around edges of screen
         if self.position.x > 1024:

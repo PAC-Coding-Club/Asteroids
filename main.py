@@ -43,16 +43,32 @@ while running:
 
     keys_pressed = pygame.key.get_pressed()
 
-    bullets.update(asteroids)
-    player.update(keys_pressed, asteroids)
+    player.update(keys_pressed)
+    bullets.update()
     asteroids.update()
+
+    # Collisions
+    for asteroid in asteroids:
+        if player.rect.colliderect(asteroid.rect):
+            print("ded")
+
+        for bullet in bullets:
+            if asteroid.rect.colliderect(bullet.rect):
+                bullet.kill()
+                if asteroid.size == 3:
+                    score += 250
+                if asteroid.size == 2:
+                    score += 100
+                if asteroid.size == 1:
+                    score += 25
+                asteroid.split()
 
     screen.fill("black")
     sprites.draw(screen)
     textsurface = font.render(f"Score: {score}", False, "white")
     screen.blit(textsurface, (10, 10))
 
-    draw_hit_boxes()
+    # draw_hit_boxes()
     pygame.display.update()
 
     clock.tick(fps)
