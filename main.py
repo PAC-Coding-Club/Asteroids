@@ -65,6 +65,7 @@ while running:
         elif invisible <= 0:
             invisible = 0
             if player.rect.colliderect(asteroid.rect):
+                lives -= 1
                 invisible = fps * invincibility_seconds
 
         for bullet in bullets:
@@ -81,6 +82,10 @@ while running:
     if score > score_for_life and lives < max_lives + 1:
         score_for_life += 10000
         lives += 1
+
+    if lives == 0:
+        print("you died")
+        running = False
 
     screen.fill("black")
     sprites.draw(screen)
