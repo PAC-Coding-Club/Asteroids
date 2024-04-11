@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import sys
 import objects
@@ -12,10 +14,18 @@ screen = pygame.display.set_mode((1024, 768))
 sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 asteroids = pygame.sprite.Group()
-player = objects.Player((200, 200), sprites)
+player = objects.Player((screen.get_width() / 2, screen.get_height() / 2), sprites)
 
 score = 0
-lives = 1
+lives = 3
+
+max_lives = 5
+
+invisible = fps * 5 # invincibility for 5 seconds
+invincibility_seconds = 5
+
+for i in range(random.randint(4, 6)):
+    objects.Asteroid((random.randint(0, screen.get_width()), random.randint(0, screen.get_height())), 3, [sprites, asteroids])
 
 
 def draw_hit_boxes():
@@ -49,8 +59,12 @@ while running:
 
     # Collisions
     for asteroid in asteroids:
-        if player.rect.colliderect(asteroid.rect):
-            print("ded")
+        if invisible > 0:
+            invisible -= 1
+        elif invisible <= 0:
+            invisible = 0
+            if player.rect.colliderect(asteroid.rect):
+                invisible = fps * invincibility_seconds
 
         for bullet in bullets:
             if asteroid.rect.colliderect(bullet.rect):
@@ -63,10 +77,16 @@ while running:
                     score += 25
                 asteroid.split()
 
+    if score > 10000 * lives - 2 and lives < max_lives + 1:
+        lives += 1
+
     screen.fill("black")
     sprites.draw(screen)
     textsurface = font.render(f"Score: {score}", False, "white")
-    screen.blit(textsurface, (10, 10))
+    screen.blit(textsurface, (13, 0))
+
+    for i in range(lives):
+        screen.blit(player.image_original, (i * 50 + 15, 60))
 
     # draw_hit_boxes()
     pygame.display.update()
