@@ -17,6 +17,7 @@ asteroids = pygame.sprite.Group()
 player = objects.Player((screen.get_width() / 2, screen.get_height() / 2), sprites)
 
 score = 0
+score_for_life = 10000
 lives = 3
 
 max_lives = 5
@@ -77,7 +78,8 @@ while running:
                     score += 25
                 asteroid.split()
 
-    if score > 10000 * lives - 2 and lives < max_lives + 1:
+    if score > score_for_life and lives < max_lives + 1:
+        score_for_life += 10000
         lives += 1
 
     screen.fill("black")
