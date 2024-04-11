@@ -1,5 +1,5 @@
 import random
-
+import asyncio
 import pygame
 import sys
 import objects
@@ -29,22 +29,12 @@ for i in range(random.randint(4, 6)):
     objects.Asteroid((random.randint(0, screen.get_width()), random.randint(0, screen.get_height())), 3, [sprites, asteroids])
 
 
-def draw_hit_boxes():
-    pygame.draw.rect(screen, "red", player.rect, 1)
-    for bullet in bullets:
-        pygame.draw.rect(screen, "red", bullet.rect, 1)
-    for asteroid in asteroids:
-        pygame.draw.rect(screen, "green", asteroid.rect, 1)
-
-
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
             if event.key == pygame.K_UP:
                 if len(bullets.sprites()) < 4:
                     objects.Bullet(player, [sprites, bullets])
@@ -83,22 +73,26 @@ while running:
         score_for_life += 10000
         lives += 1
 
+    screen.fill("black")  # fill the screen with black
+
+    # Game Over
     if lives == 0:
-        print("you died")
-        running = False
+        player.kill()
+        dead_textsurface = font.render(f"YOU DIED", False, "red")  # create score surface
+        screen.blit(dead_textsurface, (screen.get_width() / 2 - dead_textsurface.get_width() / 2, screen.get_height() / 2 - dead_textsurface.get_height() / 2))
 
-    screen.fill("black")
-    sprites.draw(screen)
-    textsurface = font.render(f"Score: {score}", False, "white")
-    screen.blit(textsurface, (13, 0))
+    sprites.draw(screen)  # draw the sprites
+    textsurface = font.render(f"Score: {score}", False, "white")  # create score surface
+    screen.blit(textsurface, (13, 0))  # draw the score surface
 
+    # draw lives
     for i in range(lives):
         screen.blit(player.image_original, (i * 50 + 15, 60))
 
-    # draw_hit_boxes()
-    pygame.display.update()
+    pygame.display.update()  # update the screen
 
-    clock.tick(fps)
+    asyncio.sleep(0)  # Required for creating a Web Version
+    clock.tick(fps)  # Tick clock to set FPS
 
 pygame.quit()
 sys.exit()
