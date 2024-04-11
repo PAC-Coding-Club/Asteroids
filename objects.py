@@ -109,7 +109,7 @@ class Player(pygame.sprite.Sprite):
             self.angle += self.r_speed
         if keys_pressed[pygame.K_RIGHT]:
             self.angle -= self.r_speed
-        if keys_pressed[pygame.K_UP]:
+        if keys_pressed[pygame.K_DOWN]:
             # add acceleration to speed when thrusting
             self.speed.x += self.acceleration * math.cos(self.angle)
             self.speed.y -= self.acceleration * math.sin(self.angle)  # minus because of inverted y-axis

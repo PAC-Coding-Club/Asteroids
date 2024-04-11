@@ -45,7 +45,7 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_UP:
                 if len(bullets.sprites()) < 4:
                     objects.Bullet(player, [sprites, bullets])
         if event.type == pygame.MOUSEBUTTONDOWN:
