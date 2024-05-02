@@ -14,11 +14,11 @@ class Asteroid(pygame.sprite.Sprite):
 
         self.size = size
         if self.size == 1:
-            self.image = pygame.image.load("asteroid1.png")
+            self.image = pygame.image.load("assets/asteroid1.png")
         elif self.size == 2:
-            self.image = pygame.image.load("asteroid2.png")
+            self.image = pygame.image.load("assets/asteroid2.png")
         elif self.size == 3:
-            self.image = pygame.image.load("asteroid3.png")
+            self.image = pygame.image.load("assets/asteroid3.png")
 
         self.image = pygame.transform.rotate(self.image, random.randint(0, 360))
         self.rect = self.image.get_rect()
@@ -51,7 +51,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, player, *groups: pygame.sprite.Group):
         super().__init__(*groups)
-        self.image = pygame.image.load("bullet.png")
+        self.image = pygame.image.load("assets/bullet.png")
         self.rect = self.image.get_rect()
         self.position = copy(player.position)
         self.rect.center = self.position
@@ -97,9 +97,9 @@ class Player(pygame.sprite.Sprite):
         self.position = pygame.Vector2(location)
 
         # Image and Rect
-        self.image = pygame.image.load("player.png")
+        self.image = pygame.image.load("assets/player.png")
         self.image_original = self.image.copy()
-        self.image_thrust = pygame.image.load("player_thrust.png") # to be changed to a different image w/ blaster on back
+        self.image_thrust = pygame.image.load("assets/player_thrust.png") # to be changed to a different image w/ blaster on back
         self.rect = self.image.get_rect()
 
     def update(self, keys_pressed):
