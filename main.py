@@ -8,91 +8,94 @@ pygame.init()
 font = pygame.font.SysFont("Segoe UI", 35)
 
 fps = 60
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode((1024, 768))
 
-sprites = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
-asteroids = pygame.sprite.Group()
-player = objects.Player((screen.get_width() / 2, screen.get_height() / 2), sprites)
+class Game():
+    def __init__(self):
+        self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((1024, 768))
 
-score = 0
-score_for_life = 10000
-lives = 3
+        self.sprites = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
+        self.asteroids = pygame.sprite.Group()
+        self.player = objects.Player((self.screen.get_width() / 2, self.screen.get_height() / 2), self.sprites)
 
-max_lives = 5
+        self.score = 0
+        self.score_for_life = 10000
+        self.lives = 3
 
-invisible = fps * 5 # invincibility for 5 seconds
-invincibility_seconds = 5
+        self.max_lives = 5
 
-for i in range(random.randint(4, 6)):
-    objects.Asteroid((random.randint(0, screen.get_width()), random.randint(0, screen.get_height())), 3, [sprites, asteroids])
+        self.invincible = fps * 5  # invincibility for 5 seconds
+        self.invincibility_seconds = 5
+
+        for i in range(random.randint(4, 6)):
+            objects.Asteroid((random.randint(0, self.screen.get_width()), random.randint(0, self.screen.get_height())), 3, [self.sprites, self.asteroids])
+
+    async def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if len(self.bullets.sprites()) < 4:
+                            objects.Bullet(self.player, [self.sprites, self.bullets])
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        objects.Asteroid(event.pos, 3, [self.sprites, self.asteroids])
+
+            keys_pressed = pygame.key.get_pressed()
+
+            self.player.update(keys_pressed)
+            self.bullets.update()
+            self.asteroids.update()
+
+            # Collisions
+            for asteroid in self.asteroids:
+                if self.invincible > 0:
+                    self.invincible -= 1
+                elif self.invincible <= 0:
+                    self.invincible = 0
+                    if self.player.rect.colliderect(asteroid.rect):
+                        self.lives -= 1
+                        invincible = fps * self.invincibility_seconds
+
+                for bullet in self.bullets:
+                    if asteroid.rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        if asteroid.size == 3:
+                            self.score += 250
+                        if asteroid.size == 2:
+                            self.score += 100
+                        if asteroid.size == 1:
+                            self.score += 25
+                        asteroid.split()
+
+            if self.score > self.score_for_life and self.lives < self.max_lives + 1:
+                self.score_for_life += 10000
+                self.lives += 1
+
+            self.screen.fill("black")  # fill the screen with black
+
+            # Game Over
+            if self.lives == 0:
+                self.player.kill()
+                dead_textsurface = font.render(f"YOU DIED", False, "red")  # create score surface
+                self.screen.blit(dead_textsurface, (self.screen.get_width() / 2 - dead_textsurface.get_width() / 2, self.screen.get_height() / 2 - dead_textsurface.get_height() / 2))
+
+            self.sprites.draw(self.screen)  # draw the sprites
+            textsurface = font.render(f"Score: {self.score}", False, "white")  # create score surface
+            self.screen.blit(textsurface, (13, 0))  # draw the score surface
+
+            # draw lives
+            for i in range(self.lives):
+                self.screen.blit(self.player.image_original, (i * 50 + 15, 60))
+
+            pygame.display.update()  # update the screen
+
+            await asyncio.sleep(0)  # Required for creating a Web Version
+            self.clock.tick(fps)  # Tick clock to set FPS
 
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                if len(bullets.sprites()) < 4:
-                    objects.Bullet(player, [sprites, bullets])
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                objects.Asteroid(event.pos, 3, [sprites, asteroids])
-
-    keys_pressed = pygame.key.get_pressed()
-
-    player.update(keys_pressed)
-    bullets.update()
-    asteroids.update()
-
-    # Collisions
-    for asteroid in asteroids:
-        if invisible > 0:
-            invisible -= 1
-        elif invisible <= 0:
-            invisible = 0
-            if player.rect.colliderect(asteroid.rect):
-                lives -= 1
-                invisible = fps * invincibility_seconds
-
-        for bullet in bullets:
-            if asteroid.rect.colliderect(bullet.rect):
-                bullet.kill()
-                if asteroid.size == 3:
-                    score += 250
-                if asteroid.size == 2:
-                    score += 100
-                if asteroid.size == 1:
-                    score += 25
-                asteroid.split()
-
-    if score > score_for_life and lives < max_lives + 1:
-        score_for_life += 10000
-        lives += 1
-
-    screen.fill("black")  # fill the screen with black
-
-    # Game Over
-    if lives == 0:
-        player.kill()
-        dead_textsurface = font.render(f"YOU DIED", False, "red")  # create score surface
-        screen.blit(dead_textsurface, (screen.get_width() / 2 - dead_textsurface.get_width() / 2, screen.get_height() / 2 - dead_textsurface.get_height() / 2))
-
-    sprites.draw(screen)  # draw the sprites
-    textsurface = font.render(f"Score: {score}", False, "white")  # create score surface
-    screen.blit(textsurface, (13, 0))  # draw the score surface
-
-    # draw lives
-    for i in range(lives):
-        screen.blit(player.image_original, (i * 50 + 15, 60))
-
-    pygame.display.update()  # update the screen
-
-    asyncio.sleep(0)  # Required for creating a Web Version
-    clock.tick(fps)  # Tick clock to set FPS
-
-pygame.quit()
-sys.exit()
+asyncio.run(Game().run())
