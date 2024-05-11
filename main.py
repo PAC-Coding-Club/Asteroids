@@ -11,10 +11,10 @@ fps = 60
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1024, 768))
 
-sprites = pygame.sprite.Group()
+players = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 asteroids = pygame.sprite.Group()
-player = objects.Player((screen.get_width() / 2, screen.get_height() / 2), sprites)
+player = objects.Player((screen.get_width() / 2, screen.get_height() / 2), players)
 
 score = 0
 score_for_life = 10000
@@ -26,7 +26,7 @@ invisible = fps * 5 # invincibility for 5 seconds
 invincibility_seconds = 5
 
 for i in range(random.randint(4, 6)):
-    objects.Asteroid((random.randint(0, screen.get_width()), random.randint(0, screen.get_height())), 3, [sprites, asteroids])
+    objects.Asteroid((random.randint(0, screen.get_width()), random.randint(0, screen.get_height())), 3, asteroids)
 
 
 running = True
@@ -36,11 +36,11 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                if len(bullets.sprites()) < 4:
-                    objects.Bullet(player, [sprites, bullets])
+                if len(bullets.sprites()) < 4 and lives > 0:
+                    objects.Bullet(player, bullets)
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                objects.Asteroid(event.pos, 3, [sprites, asteroids])
+                objects.Asteroid(event.pos, 3, asteroids)
 
     keys_pressed = pygame.key.get_pressed()
 
@@ -81,7 +81,10 @@ while running:
         dead_textsurface = font.render(f"YOU DIED", False, "red")  # create score surface
         screen.blit(dead_textsurface, (screen.get_width() / 2 - dead_textsurface.get_width() / 2, screen.get_height() / 2 - dead_textsurface.get_height() / 2))
 
-    sprites.draw(screen)  # draw the sprites
+    bullets.draw(screen)  # draw the sprites
+    asteroids.draw(screen)
+    players.draw(screen)
+
     textsurface = font.render(f"Score: {score}", False, "white")  # create score surface
     screen.blit(textsurface, (13, 0))  # draw the score surface
 

@@ -6,8 +6,7 @@ import pygame
 
 class Asteroid(pygame.sprite.Sprite):
     def __init__(self, location, size, *groups: pygame.sprite.Group):
-        super().__init__(*groups)
-
+        pygame.sprite.Sprite.__init__(self, *groups) # inherits features of Sprite() class to this class
         self.speed = pygame.Vector2(1, 1).copy()
         self.speed.rotate_ip(random.randint(0, 360))
         self.position = pygame.Vector2(location).copy()
@@ -50,7 +49,7 @@ class Asteroid(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, player, *groups: pygame.sprite.Group):
-        super().__init__(*groups)
+        pygame.sprite.Sprite.__init__(self, *groups) # inherits features of Sprite() class to this class
         self.image = pygame.image.load("assets/bullet.png")
         self.rect = self.image.get_rect()
         self.position = copy(player.position)
@@ -83,7 +82,7 @@ class Bullet(pygame.sprite.Sprite):
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, location, *groups: pygame.sprite.Group):
-        super().__init__(*groups)
+        pygame.sprite.Sprite.__init__(self, *groups) # inherits features of Sprite() class to this class
 
         # Fixed Values
         self.max_speed = 3
