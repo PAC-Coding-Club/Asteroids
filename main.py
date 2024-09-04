@@ -7,7 +7,6 @@ import objects
 pygame.init()
 font = pygame.font.SysFont("Segoe UI", 35)
 
-
 fps = 60
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1024, 768))
